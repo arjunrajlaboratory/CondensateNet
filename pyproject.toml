@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "condensatenet"
+version = "0.1.0"
+description = "Deep learning for biomolecular condensate segmentation"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Raj Lab", email = "arjunrajlab@gmail.com"}
+]
+keywords = [
+    "deep learning",
+    "image segmentation",
+    "biomolecular condensates",
+    "microscopy",
+    "cell biology"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "torch>=2.0.0",
+    "transformers>=4.30.0",
+    "timm>=0.9.0",
+    "numpy>=1.21.0",
+    "scikit-image>=0.19.0",
+    "huggingface-hub>=0.16.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "ruff>=0.0.270",
+]
+
+[project.urls]
+Homepage = "https://github.com/arjunrajlaboratory/condensatenet"
+Repository = "https://github.com/arjunrajlaboratory/condensatenet"
+Documentation = "https://github.com/arjunrajlaboratory/condensatenet#readme"
+"Bug Tracker" = "https://github.com/arjunrajlaboratory/condensatenet/issues"
+
+[project.scripts]
+condensatenet = "condensatenet.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["condensatenet*"]
+
+[tool.black]
+line-length = 100
+target-version = ["py39", "py310", "py311", "py312"]
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "W", "I", "N"]
+ignore = ["E501"]
