@@ -92,8 +92,8 @@ class CondensateLoss(nn.Module):
         total_loss = torch.nan_to_num(total_loss)
 
         return total_loss, {
-            "focal": float(torch.nan_to_num(focal_loss)),
-            "dice": float(torch.nan_to_num(dice_loss)),
-            "flow": float(torch.nan_to_num(flow_loss)),
-            "total": float(torch.nan_to_num(total_loss))
+            "focal": float(torch.nan_to_num(focal_loss).detach()),
+            "dice": float(torch.nan_to_num(dice_loss).detach()),
+            "flow": float(torch.nan_to_num(flow_loss).detach()),
+            "total": float(torch.nan_to_num(total_loss).detach())
         }
