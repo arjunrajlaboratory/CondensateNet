@@ -22,11 +22,14 @@ class AugmentationPresets:
             'vertical_flip_prob': 0.3,
             'rotation_limit': 3,
             'rotation_prob': 0.2,
-            'brightness_limit': 0.05,
-            'contrast_limit': 0.1,
-            'brightness_contrast_prob': 0.3,
-            'gamma_limit': (95, 105),
-            'gamma_prob': 0.2,
+            'brightness_limit': 0.15,
+            'contrast_limit': 0.25,
+            'brightness_contrast_prob': 0.5,
+            'gamma_limit': (70, 140),
+            'gamma_prob': 0.4,
+            'intensity_scale_range': (0.5, 1.5),
+            'intensity_scale_prob': 0.3,
+            'clahe_prob': 0.2,
         }
 
     @staticmethod
@@ -36,11 +39,14 @@ class AugmentationPresets:
             'vertical_flip_prob': 0.5,
             'rotation_limit': 5,
             'rotation_prob': 0.3,
-            'brightness_limit': 0.08,
-            'contrast_limit': 0.2,
-            'brightness_contrast_prob': 0.5,
-            'gamma_limit': (90, 110),
-            'gamma_prob': 0.3,
+            'brightness_limit': 0.25,
+            'contrast_limit': 0.35,
+            'brightness_contrast_prob': 0.6,
+            'gamma_limit': (60, 160),
+            'gamma_prob': 0.5,
+            'intensity_scale_range': (0.4, 1.8),
+            'intensity_scale_prob': 0.4,
+            'clahe_prob': 0.3,
             'elastic_alpha': 50,
             'elastic_sigma': 5,
             'elastic_prob': 0.2,
@@ -53,11 +59,14 @@ class AugmentationPresets:
             'vertical_flip_prob': 0.7,
             'rotation_limit': 10,
             'rotation_prob': 0.5,
-            'brightness_limit': 0.12,
-            'contrast_limit': 0.3,
+            'brightness_limit': 0.35,
+            'contrast_limit': 0.45,
             'brightness_contrast_prob': 0.7,
-            'gamma_limit': (80, 120),
-            'gamma_prob': 0.5,
+            'gamma_limit': (50, 200),
+            'gamma_prob': 0.6,
+            'intensity_scale_range': (0.3, 2.0),
+            'intensity_scale_prob': 0.5,
+            'clahe_prob': 0.4,
             'elastic_alpha': 100,
             'elastic_sigma': 10,
             'elastic_prob': 0.4,
@@ -83,6 +92,10 @@ class AlbumentationsAugmentation:
             self.params.update(custom_params)
 
         self.geo_transform, self.pixel_transform = self._build_transform()
+
+        # Intensity scaling params (applied separately since it's a simple multiply)
+        self.intensity_scale_prob = self.params.get('intensity_scale_prob', 0)
+        self.intensity_scale_range = self.params.get('intensity_scale_range', (0.5, 1.5))
 
     def _get_preset(self, mode: str) -> Dict:
         if mode == 'light':
@@ -153,6 +166,15 @@ class AlbumentationsAugmentation:
                 p=self.params['gaussian_blur_prob']
             ))
 
+        # CLAHE (adaptive histogram equalization) — simulates auto-contrast
+        # adjustment that microscope software often applies
+        if self.params.get('clahe_prob', 0) > 0:
+            pixel_transforms.append(A.CLAHE(
+                clip_limit=4.0,
+                tile_grid_size=(8, 8),
+                p=self.params['clahe_prob']
+            ))
+
         geo = A.Compose(
             geometric_transforms,
             additional_targets={'mask': 'mask', 'flows': 'image'}
@@ -190,6 +212,9 @@ class AlbumentationsAugmentation:
                     pix_result = self.pixel_transform(image=aug_image)
                     aug_image = pix_result['image']
 
+                # Step 3: Intensity scaling (compress or expand contrast)
+                aug_image = self._apply_intensity_scale(aug_image)
+
                 # CRITICAL: Clip flows to valid range [-1, 1]
                 aug_flows = np.clip(aug_flows, -1.0, 1.0)
 
@@ -204,6 +229,8 @@ class AlbumentationsAugmentation:
                     pix_result = self.pixel_transform(image=aug_image)
                     aug_image = pix_result['image']
 
+                aug_image = self._apply_intensity_scale(aug_image)
+
                 return aug_image, aug_mask
 
         except Exception as e:
@@ -211,6 +238,19 @@ class AlbumentationsAugmentation:
             if flows is not None:
                 return image, mask, flows
             return image, mask
+
+    def _apply_intensity_scale(self, image: np.ndarray) -> np.ndarray:
+        """Randomly scale image intensity to simulate varying contrast conditions.
+
+        Values < 1.0 compress contrast (dimmer, lower-contrast images).
+        Values > 1.0 expand contrast (brighter, higher-contrast images).
+        Result is clipped to [0, 1].
+        """
+        if self.intensity_scale_prob > 0 and np.random.random() < self.intensity_scale_prob:
+            lo, hi = self.intensity_scale_range
+            scale = np.random.uniform(lo, hi)
+            image = image * scale
+        return np.clip(image, 0, 1)
 
 class SimpleAugmentation:
     """
@@ -283,6 +323,12 @@ class SimpleAugmentation:
                 self.params['brightness_limit']
             )
             aug_image = np.clip(aug_image * brightness_factor, 0, aug_image.max())
+
+        # Intensity scaling (image only)
+        scale_range = self.params.get('intensity_scale_range', (0.5, 1.5))
+        if np.random.random() < self.params.get('intensity_scale_prob', 0):
+            scale = np.random.uniform(scale_range[0], scale_range[1])
+            aug_image = np.clip(aug_image * scale, 0, 1)
 
         if flows is not None:
             return aug_image, aug_mask, aug_flows
