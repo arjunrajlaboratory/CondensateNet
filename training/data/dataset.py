@@ -62,7 +62,7 @@ class CondensateDataset(Dataset):
             self.tiling_strategy = RandomTilingStrategy(
                 tile_size=self.config.tile_size,
                 samples_per_image=1,  # One random tile per image per epoch
-                foreground_bias=0.7   # 70% chance to sample near foreground
+                foreground_bias=self.config.foreground_sampling_prob
             )
         elif self.split == "val":
             self.tiling_strategy = ValidationTilingStrategy(

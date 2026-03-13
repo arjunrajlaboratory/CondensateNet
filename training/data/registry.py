@@ -238,11 +238,12 @@ class DataRegistry:
                 sample.validation_message = f"Invalid mask dimensions: {mask.ndim}D"
                 return
 
-            # FIXED: Check minimum size requirements
+            # Check minimum size requirements (must be at least tile_size)
             h, w = img.shape[:2]
-            if h < self.min_image_size or w < self.min_image_size:
+            min_required = max(self.min_image_size, self.tile_size)
+            if h < min_required or w < min_required:
                 sample.validation_message = (
-                    f"Image too small: {h}x{w} < minimum {self.min_image_size}x{self.min_image_size}"
+                    f"Image too small: {h}x{w} < minimum {min_required}x{min_required}"
                 )
                 return
 

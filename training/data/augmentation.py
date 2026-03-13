@@ -82,7 +82,7 @@ class AlbumentationsAugmentation:
         if custom_params:
             self.params.update(custom_params)
 
-        self.transform = self._build_transform()
+        self.geo_transform, self.pixel_transform = self._build_transform()
 
     def _get_preset(self, mode: str) -> Dict:
         if mode == 'light':
@@ -95,7 +95,12 @@ class AlbumentationsAugmentation:
             raise ValueError(f"Unknown mode: {mode}")
 
     def _build_transform(self):
-        """Build transform pipeline with proper flow handling."""
+        """Build transform pipelines with proper flow handling.
+
+        Returns (geometric_transform, pixel_transform):
+        - geometric_transform applies to image, mask, AND flows
+        - pixel_transform applies ONLY to image (not flows)
+        """
         # Geometric transforms (apply to image, mask, AND flows)
         geometric_transforms = []
 
@@ -122,10 +127,11 @@ class AlbumentationsAugmentation:
                 p=self.params['elastic_prob']
             ))
 
-        # Pixel-level transforms (apply ONLY to image)
-        # These will be filtered out for flows in __call__
+        # Pixel-level transforms (apply ONLY to image, not flows)
+        pixel_transforms = []
+
         if self.params.get('brightness_contrast_prob', 0) > 0:
-            geometric_transforms.append(A.RandomBrightnessContrast(
+            pixel_transforms.append(A.RandomBrightnessContrast(
                 brightness_limit=self.params['brightness_limit'],
                 contrast_limit=self.params['contrast_limit'],
                 brightness_by_max=True,
@@ -133,25 +139,27 @@ class AlbumentationsAugmentation:
             ))
 
         if self.params.get('gamma_prob', 0) > 0:
-            geometric_transforms.append(A.RandomGamma(
+            pixel_transforms.append(A.RandomGamma(
                 gamma_limit=self.params['gamma_limit'],
                 p=self.params['gamma_prob']
             ))
 
         if self.params.get('gaussian_noise_prob', 0) > 0:
-            geometric_transforms.append(A.GaussNoise(p=self.params['gaussian_noise_prob']))
+            pixel_transforms.append(A.GaussNoise(p=self.params['gaussian_noise_prob']))
 
         if self.params.get('gaussian_blur_prob', 0) > 0:
-            geometric_transforms.append(A.GaussianBlur(
+            pixel_transforms.append(A.GaussianBlur(
                 blur_limit=(3, 5),
                 p=self.params['gaussian_blur_prob']
             ))
 
-        # Return composed transforms with flow support
-        return A.Compose(
+        geo = A.Compose(
             geometric_transforms,
             additional_targets={'mask': 'mask', 'flows': 'image'}
         )
+        pix = A.Compose(pixel_transforms) if pixel_transforms else None
+
+        return geo, pix
 
     def __call__(self, image: np.ndarray, mask: np.ndarray,
                  flows: Optional[np.ndarray] = None) -> Union[Tuple[np.ndarray, np.ndarray],
@@ -169,18 +177,34 @@ class AlbumentationsAugmentation:
                 flows = np.ascontiguousarray(flows)
                 flows_hwc = np.transpose(flows, (1, 2, 0))  # (2, H, W) -> (H, W, 2)
 
-                augmented = self.transform(image=image, mask=mask, flows=flows_hwc)
+                # Step 1: Geometric transforms (applied to image, mask, AND flows)
+                augmented = self.geo_transform(image=image, mask=mask, flows=flows_hwc)
+                aug_image = augmented['image']
+                aug_mask = augmented['mask']
 
                 # Convert flows back to (2, H, W)
                 aug_flows = np.transpose(augmented['flows'], (2, 0, 1))
 
+                # Step 2: Pixel transforms (applied ONLY to image, not flows)
+                if self.pixel_transform is not None:
+                    pix_result = self.pixel_transform(image=aug_image)
+                    aug_image = pix_result['image']
+
                 # CRITICAL: Clip flows to valid range [-1, 1]
                 aug_flows = np.clip(aug_flows, -1.0, 1.0)
 
-                return augmented['image'], augmented['mask'], aug_flows
+                return aug_image, aug_mask, aug_flows
             else:
-                augmented = self.transform(image=image, mask=mask)
-                return augmented['image'], augmented['mask']
+                # No flows: apply all transforms to image and mask
+                augmented = self.geo_transform(image=image, mask=mask)
+                aug_image = augmented['image']
+                aug_mask = augmented['mask']
+
+                if self.pixel_transform is not None:
+                    pix_result = self.pixel_transform(image=aug_image)
+                    aug_image = pix_result['image']
+
+                return aug_image, aug_mask
 
         except Exception as e:
             warnings.warn(f"Augmentation failed: {e}")
