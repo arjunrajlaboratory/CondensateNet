@@ -83,6 +83,48 @@ The ReduceLROnPlateau scheduler reduced LR three times:
 
 5. **Small validation set**: Only 26 validation samples means high variance in val metrics epoch-to-epoch. This likely explains some of the val Dice fluctuation.
 
+## Inference Results
+
+Ran inference on the validation set using `best_model.pt` (epoch 38).
+
+```
+python -m training.inference \
+    --checkpoint data/processed/checkpoints/best_model.pt \
+    --output-dir inference_results \
+    --batch-size 4
+```
+
+### Aggregate Metrics
+
+| Metric | Mean | Std |
+|--------|------|-----|
+| Dice | 0.521 | 0.200 |
+| IoU | 0.375 | 0.202 |
+| Precision | 0.467 | 0.193 |
+| Recall | 0.624 | 0.241 |
+| Flow L2 Error | 0.936 | 0.078 |
+
+Median Dice: 0.519. Optimal threshold range: 0.10–0.90 (mean 0.60).
+
+### Per-Batch Breakdown
+
+| Batch | Dice | Threshold | Notes |
+|-------|------|-----------|-------|
+| 0 | 0.458 | 0.90 | Missed several condensates, threshold too aggressive |
+| 1 | 0.584 | 0.30 | Small scattered condensates, decent detection |
+| 2 | 0.519 | 0.50 | Sparse image, a couple condensates found |
+| 3 | 0.572 | 0.90 | Dense field — finds bright ones, misses small/dim |
+| 4 | 0.873 | 0.60 | Best result — large well-defined condensates |
+
+### Qualitative Observations
+
+1. **Large/bright condensates** are segmented well (Batch 4 hit 0.87 Dice).
+2. **Small, dim, or densely packed condensates** are under-segmented — the model misses many (visible as red-only regions in overlays).
+3. **Flow field predictions are weak** compared to ground truth — the flow head isn't contributing meaningfully yet. Flow magnitudes are much lower than GT.
+4. **Threshold instability** across batches (0.10 to 0.90) indicates poor confidence calibration — the model's raw logit scale varies significantly across different image types.
+
+Visualizations saved to `inference_results/` (git-ignored).
+
 ## Potential Improvements
 
 - **More data or stronger augmentation** to address overfitting

@@ -54,7 +54,7 @@ class CondensateInference:
         print(f"Loading model from {self.model_path}")
 
         # Load checkpoint
-        checkpoint = torch.load(self.model_path, map_location=self.device)
+        checkpoint = torch.load(self.model_path, map_location=self.device, weights_only=False)
 
         # Debug: print checkpoint keys
         print(f"Checkpoint keys: {checkpoint.keys()}")
