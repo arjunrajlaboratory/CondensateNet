@@ -49,7 +49,7 @@ Contains:
   - Flow: flow_niter=200, flow_use_bbox=True, flow_min_size=10, flow_device='cpu'
   - Augmentation: use_albumentations=True, aug_mode='medium' (references presets in augmentation.py, does NOT duplicate them)
   - Training: val_ratio=0.15, random_seed=42, batch_size=8, num_workers=0, pin_memory=True
-  - Loss weights: flow_scale=5.0, focal_weight=0.5, dice_weight=0.5, flow_weight=1.0
+  - Loss weights: flow_scale=5.0, focal_weight=0.4, dice_weight=0.6, flow_weight=1.0 (tuned values from final training run)
   - Paths: images_dir, masks_dir, output_dir (default to `data/` at repo root)
 
 Changes from source:
@@ -179,7 +179,7 @@ Contains:
 - `compute_condensate_metrics()` — per-batch metrics (dice, flow error, precision, recall)
 - `adaptive_threshold_search()` — finds optimal probability threshold on validation set
 - `train_condensate_model()` — full training loop with:
-  - AdamW optimizer, OneCycleLR scheduler
+  - AdamW optimizer, ReduceLROnPlateau scheduler
   - Mixed precision (AMP) support
   - Gradient clipping
   - Validation every N epochs
@@ -258,7 +258,7 @@ data/dataset.py ← config, tiling, augmentation, flows, registry
 data/__init__.py — empty (or re-exports CondensateDataset, create_dataloaders)
 loss.py (standalone)
 train.py ← config, model, data/registry, data/dataset, loss
-inference.py ← config, model
+inference.py ← config, model, train (for compute_condensate_metrics)
 ```
 
 ## Data Layout
