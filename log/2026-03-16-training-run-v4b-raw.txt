@@ -414,6 +414,6 @@ Epoch 094/120 | Loss 0.2987/0.3268 | F1 0.533/0.500 | Dice 0.500 | IoU 0.336 | P
 ================================================================================
 Training complete!
 Best Dice: 0.516 at epoch 69
-Model saved to: /home/arjun/CondensateNet/data/processed/checkpoints/best_model.pt
+Model saved to: data/processed/checkpoints/best_model.pt
 ================================================================================
 

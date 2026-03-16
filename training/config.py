@@ -46,6 +46,7 @@ class PipelineConfig:
     val_ratio: float = 0.15
     random_seed: int = 42
     batch_size: int = 8
+    num_epochs: int = 120
     num_workers: int = 0
     pin_memory: bool = True
 
