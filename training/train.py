@@ -104,12 +104,14 @@ def train_condensate_model(
     device=None,
     mixed_precision=True,
     gradient_clip_value=5.0,
+    warmup_epochs=5,
+    early_stopping_patience=25,
 ):
     """
     Train condensate segmentation model with adaptive thresholding and precision logging.
 
-    Uses AdamW optimizer and ReduceLROnPlateau scheduler. Always monitors gradient
-    norms and logs detailed training diagnostics.
+    Uses AdamW optimizer with cosine annealing + linear warmup. Includes early
+    stopping based on validation Dice.
 
     Args:
         model: The segmentation model to train.
@@ -124,6 +126,8 @@ def train_condensate_model(
         device: Torch device (default: auto-detect).
         mixed_precision: Whether to use AMP (default: True).
         gradient_clip_value: Max gradient norm (default: 5.0).
+        warmup_epochs: Number of epochs for linear LR warmup (default: 5).
+        early_stopping_patience: Stop if val Dice doesn't improve for this many epochs (default: 25).
 
     Returns:
         Tuple of (model, history) where history is a dict of training metrics.
@@ -139,9 +143,18 @@ def train_condensate_model(
     # === Optimizer (always AdamW) ===
     optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
 
-    # === Scheduler (always ReduceLROnPlateau) ===
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode="max", factor=0.5, patience=10, cooldown=5, min_lr=1e-6
+    # === Scheduler: linear warmup + cosine annealing ===
+    # Warmup: linearly ramp LR from 0 to target over warmup_epochs
+    # Cosine: decay from target LR to min_lr over remaining epochs
+    warmup_scheduler = optim.lr_scheduler.LinearLR(
+        optimizer, start_factor=1e-3, end_factor=1.0, total_iters=warmup_epochs
+    )
+    cosine_scheduler = optim.lr_scheduler.CosineAnnealingLR(
+        optimizer, T_max=num_epochs - warmup_epochs, eta_min=1e-6
+    )
+    scheduler = optim.lr_scheduler.SequentialLR(
+        optimizer, schedulers=[warmup_scheduler, cosine_scheduler],
+        milestones=[warmup_epochs]
     )
 
     # === History tracking ===
@@ -158,9 +171,12 @@ def train_condensate_model(
     print(f"\nTraining on {device} using AdamW | Loss: {loss_fn.__class__.__name__}")
     print(f"   Gradient clipping: {gradient_clip_value}")
     print(f"   Mixed precision: {mixed_precision}")
+    print(f"   LR schedule: linear warmup ({warmup_epochs} ep) + cosine annealing")
+    print(f"   Early stopping patience: {early_stopping_patience}")
     print("-" * 80)
 
     best_val_dice, best_epoch = 0.0, 0
+    epochs_without_improvement = 0
 
     for epoch in range(num_epochs):
         t0 = time.time()
@@ -297,7 +313,7 @@ def train_condensate_model(
 
         # Learning rate
         lr_now = optimizer.param_groups[0]["lr"]
-        scheduler.step(avg_val_dice)
+        scheduler.step()
 
         # Timing
         dt = time.time() - t0
@@ -338,6 +354,7 @@ def train_condensate_model(
         if avg_val_dice > best_val_dice:
             best_val_dice = avg_val_dice
             best_epoch = epoch
+            epochs_without_improvement = 0
             torch.save({
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
@@ -348,6 +365,13 @@ def train_condensate_model(
                 'config': config,
             }, save_dir / "best_model.pt")
             print(f"  New best Dice: {best_val_dice:.3f} at epoch {epoch+1}")
+        else:
+            epochs_without_improvement += 1
+
+        # Early stopping
+        if early_stopping_patience and epochs_without_improvement >= early_stopping_patience:
+            print(f"\n  Early stopping: no improvement for {early_stopping_patience} epochs")
+            break
 
         # Periodic checkpoint
         if (epoch + 1) % 10 == 0:
