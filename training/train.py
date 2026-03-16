@@ -424,4 +424,5 @@ if __name__ == "__main__":
         val_loader=val_loader,
         loss_fn=loss_fn,
         config=config,
+        num_epochs=120,
     )

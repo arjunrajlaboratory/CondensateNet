@@ -1,0 +1,341 @@
+Unexpected keys (bn2.num_batches_tracked, bn2.bias, bn2.running_mean, bn2.running_var, bn2.weight, classifier.bias, classifier.weight, conv_head.weight) found while loading pretrained weights. This may be expected if model is being adapted.
+Scanning for image-mask pairs...
+Scanning for image-mask pairs...
+  Found 254 .tif images
+  Matched 252 image-mask pairs
+Found 252 potential pairs
+
+Validation complete:
+  Valid: 245
+  Invalid: 7
+
+Invalid samples by reason:
+  Constant intensity image: 7
+
+Valid image sizes:
+  Height: min=400, max=2048, mean=1373.3
+  Width: min=400, max=2048, mean=1373.3
+
+Creating train/val splits...
+
+=== Augmentation Strategy Summary ===
+15minrepeat001                           | capped 141→80        | augmentation: light
+2025-06-30                               | kept 8               | augmentation: medium
+2025-07-01                               | kept 2               | augmentation: heavy
+2025-07-07                               | kept 2               | augmentation: heavy
+Denoised                                 | kept 12              | augmentation: medium
+G                                        | kept 1               | augmentation: heavy
+G3BP1-mClover                            | kept 11              | augmentation: medium
+GFP                                      | kept 3               | augmentation: heavy
+GFP-ETV6-NTRK3                           | kept 1               | augmentation: heavy
+GFP-FUS(strada                           | kept 1               | augmentation: heavy
+HSPA1A                                   | kept 33              | augmentation: light
+NaAsO2                                   | kept 1               | augmentation: heavy
+TIAR                                     | kept 4               | augmentation: heavy
+ddx5                                     | kept 25              | augmentation: light
+Train: 158, Val: 26
+
+=== Training Dataset ===
+
+=== Dataset Augmentation Info ===
+Split: train
+15minrepeat001                           | samples: 141->68         | aug: light
+2025-06-30                               | samples: 8->7            | aug: medium
+2025-07-01                               | samples: 2->1            | aug: heavy
+2025-07-07                               | samples: 2->1            | aug: heavy
+Denoised                                 | samples: 12->11          | aug: medium
+G                                        | samples: 1               | aug: heavy
+G3BP1-mClover                            | samples: 11->10          | aug: medium
+GFP                                      | samples: 3->2            | aug: heavy
+GFP-ETV6-NTRK3                           | samples: 1               | aug: heavy
+GFP-FUS(strada                           | samples: 1               | aug: heavy
+HSPA1A                                   | samples: 33->29          | aug: light
+NaAsO2                                   | samples: 1               | aug: heavy
+TIAR                                     | samples: 4->3            | aug: heavy
+ddx5                                     | samples: 25->22          | aug: light
+
+=== Validation Dataset ===
+
+=== Dataset Augmentation Info ===
+Split: val
+15minrepeat001                           | samples: 141->12         | aug: none
+2025-06-30                               | samples: 8->1            | aug: none
+2025-07-01                               | samples: 2->1            | aug: none
+2025-07-07                               | samples: 2->1            | aug: none
+Denoised                                 | samples: 12->1           | aug: none
+G3BP1-mClover                            | samples: 11->1           | aug: none
+GFP                                      | samples: 3->1            | aug: none
+HSPA1A                                   | samples: 33->4           | aug: none
+TIAR                                     | samples: 4->1            | aug: none
+ddx5                                     | samples: 25->3           | aug: none
+
+Training on cuda using AdamW | Loss: CondensateLoss
+   Gradient clipping: 5.0
+   Mixed precision: True
+   LR schedule: linear warmup (5 ep) + cosine annealing
+   Early stopping patience: 25
+--------------------------------------------------------------------------------
+  [Epoch 1, Batch 10/19] Loss: 0.6044, F1: 0.000, Grad: 0.07
+Epoch 001/80 | Loss 0.6056/0.6056 | F1 0.000/0.007 | Dice 0.007 | IoU 0.004 | P 0.004 | R 1.000 | Thr 0.10 | LR 2.0e-07 | 25.8s
+       Grad: 0.07 | Train [F:0.006 D:0.992 Fl:0.001 C:0.0132] | Val [F:0.005 D:0.993 Fl:0.001 C:0.0133]
+  New best Dice: 0.007 at epoch 1
+  [Epoch 2, Batch 10/19] Loss: 0.6047, F1: 0.000, Grad: 0.11
+Epoch 002/80 | Loss 0.6054/0.6055 | F1 0.000/0.007 | Dice 0.007 | IoU 0.004 | P 0.004 | R 1.000 | Thr 0.10 | LR 4.0e-05 | 22.5s
+       Grad: 0.10 | Train [F:0.006 D:0.992 Fl:0.001 C:0.0134] | Val [F:0.005 D:0.993 Fl:0.001 C:0.0133]
+  [Epoch 3, Batch 10/19] Loss: 0.6055, F1: 0.000, Grad: 0.15
+Epoch 003/80 | Loss 0.6040/0.6055 | F1 0.011/0.007 | Dice 0.007 | IoU 0.004 | P 0.004 | R 1.000 | Thr 0.10 | LR 8.0e-05 | 22.8s
+       Grad: 0.14 | Train [F:0.005 D:0.989 Fl:0.002 C:0.0138] | Val [F:0.005 D:0.993 Fl:0.001 C:0.0132]
+  [Epoch 4, Batch 10/19] Loss: 0.6031, F1: 0.161, Grad: 0.17
+Epoch 004/80 | Loss 0.6012/0.6040 | F1 0.104/0.178 | Dice 0.178 | IoU 0.098 | P 0.164 | R 0.228 | Thr 0.22 | LR 1.2e-04 | 23.0s
+       Grad: 0.15 | Train [F:0.004 D:0.983 Fl:0.003 C:0.0150] | Val [F:0.004 D:0.990 Fl:0.002 C:0.0141]
+  New best Dice: 0.178 at epoch 4
+  [Epoch 5, Batch 10/19] Loss: 0.6041, F1: 0.150, Grad: 0.11
+Epoch 005/80 | Loss 0.5969/0.5991 | F1 0.271/0.299 | Dice 0.299 | IoU 0.177 | P 0.283 | R 0.354 | Thr 0.65 | LR 1.6e-04 | 23.2s
+       Grad: 0.13 | Train [F:0.003 D:0.973 Fl:0.004 C:0.0161] | Val [F:0.002 D:0.975 Fl:0.004 C:0.0187]
+  New best Dice: 0.299 at epoch 5
+  [Epoch 6, Batch 10/19] Loss: 0.5974, F1: 0.222, Grad: 0.14
+Epoch 006/80 | Loss 0.5962/0.5971 | F1 0.243/0.355 | Dice 0.355 | IoU 0.217 | P 0.319 | R 0.400 | Thr 0.59 | LR 2.0e-04 | 23.0s
+       Grad: 0.13 | Train [F:0.003 D:0.969 Fl:0.005 C:0.0172] | Val [F:0.002 D:0.973 Fl:0.004 C:0.0167]
+  New best Dice: 0.355 at epoch 6
+  [Epoch 7, Batch 10/19] Loss: 0.5993, F1: 0.207, Grad: 0.13
+Epoch 007/80 | Loss 0.5913/0.5960 | F1 0.324/0.376 | Dice 0.376 | IoU 0.233 | P 0.337 | R 0.430 | Thr 0.77 | LR 2.0e-04 | 23.4s
+       Grad: 0.12 | Train [F:0.003 D:0.960 Fl:0.006 C:0.0167] | Val [F:0.002 D:0.968 Fl:0.005 C:0.0185]
+  New best Dice: 0.376 at epoch 7
+  [Epoch 8, Batch 10/19] Loss: 0.5969, F1: 0.315, Grad: 0.09
+Epoch 008/80 | Loss 0.5919/0.5934 | F1 0.308/0.355 | Dice 0.355 | IoU 0.217 | P 0.318 | R 0.429 | Thr 0.81 | LR 2.0e-04 | 23.5s
+       Grad: 0.09 | Train [F:0.003 D:0.962 Fl:0.006 C:0.0165] | Val [F:0.003 D:0.963 Fl:0.005 C:0.0178]
+  [Epoch 9, Batch 10/19] Loss: 0.5936, F1: 0.326, Grad: 0.16
+Epoch 009/80 | Loss 0.5895/0.5927 | F1 0.304/0.373 | Dice 0.373 | IoU 0.230 | P 0.362 | R 0.428 | Thr 0.74 | LR 2.0e-04 | 23.6s
+       Grad: 0.14 | Train [F:0.003 D:0.956 Fl:0.006 C:0.0165] | Val [F:0.003 D:0.965 Fl:0.005 C:0.0154]
+  [Epoch 10, Batch 10/19] Loss: 0.6053, F1: 0.087, Grad: 0.13
+Epoch 010/80 | Loss 0.5907/0.5927 | F1 0.287/0.348 | Dice 0.348 | IoU 0.214 | P 0.300 | R 0.425 | Thr 0.69 | LR 2.0e-04 | 23.0s
+       Grad: 0.12 | Train [F:0.003 D:0.959 Fl:0.006 C:0.0165] | Val [F:0.003 D:0.966 Fl:0.005 C:0.0151]
+  [Epoch 11, Batch 10/19] Loss: 0.6024, F1: 0.132, Grad: 0.12
+Epoch 011/80 | Loss 0.5871/0.5918 | F1 0.305/0.394 | Dice 0.394 | IoU 0.246 | P 0.356 | R 0.464 | Thr 0.74 | LR 2.0e-04 | 23.5s
+       Grad: 0.12 | Train [F:0.004 D:0.952 Fl:0.007 C:0.0159] | Val [F:0.003 D:0.963 Fl:0.005 C:0.0158]
+  New best Dice: 0.394 at epoch 11
+  [Epoch 12, Batch 10/19] Loss: 0.5634, F1: 0.530, Grad: 0.11
+Epoch 012/80 | Loss 0.5886/0.5895 | F1 0.315/0.354 | Dice 0.354 | IoU 0.217 | P 0.299 | R 0.477 | Thr 0.85 | LR 2.0e-04 | 23.3s
+       Grad: 0.10 | Train [F:0.003 D:0.956 Fl:0.006 C:0.0153] | Val [F:0.003 D:0.958 Fl:0.006 C:0.0159]
+  [Epoch 13, Batch 10/19] Loss: 0.5810, F1: 0.409, Grad: 0.09
+Epoch 013/80 | Loss 0.5853/0.5881 | F1 0.343/0.374 | Dice 0.374 | IoU 0.231 | P 0.291 | R 0.553 | Thr 0.82 | LR 2.0e-04 | 22.3s
+       Grad: 0.11 | Train [F:0.003 D:0.950 Fl:0.007 C:0.0149] | Val [F:0.004 D:0.955 Fl:0.006 C:0.0155]
+  [Epoch 14, Batch 10/19] Loss: 0.5940, F1: 0.203, Grad: 0.12
+Epoch 014/80 | Loss 0.5855/0.5868 | F1 0.306/0.383 | Dice 0.383 | IoU 0.239 | P 0.333 | R 0.470 | Thr 0.80 | LR 1.9e-04 | 22.8s
+       Grad: 0.12 | Train [F:0.005 D:0.948 Fl:0.007 C:0.0155] | Val [F:0.003 D:0.956 Fl:0.005 C:0.0126]
+  [Epoch 15, Batch 10/19] Loss: 0.5839, F1: 0.318, Grad: 0.14
+Epoch 015/80 | Loss 0.5832/0.5860 | F1 0.314/0.377 | Dice 0.377 | IoU 0.235 | P 0.342 | R 0.438 | Thr 0.79 | LR 1.9e-04 | 23.0s
+       Grad: 0.13 | Train [F:0.004 D:0.946 Fl:0.007 C:0.0146] | Val [F:0.003 D:0.956 Fl:0.005 C:0.0115]
+  [Epoch 16, Batch 10/19] Loss: 0.5943, F1: 0.176, Grad: 0.13
+Epoch 016/80 | Loss 0.5829/0.5844 | F1 0.288/0.397 | Dice 0.397 | IoU 0.248 | P 0.349 | R 0.495 | Thr 0.85 | LR 1.9e-04 | 24.1s
+       Grad: 0.12 | Train [F:0.005 D:0.943 Fl:0.007 C:0.0159] | Val [F:0.003 D:0.953 Fl:0.005 C:0.0112]
+  New best Dice: 0.397 at epoch 16
+  [Epoch 17, Batch 10/19] Loss: 0.5718, F1: 0.391, Grad: 0.11
+Epoch 017/80 | Loss 0.5807/0.5866 | F1 0.356/0.332 | Dice 0.332 | IoU 0.202 | P 0.235 | R 0.609 | Thr 0.90 | LR 1.9e-04 | 22.4s
+       Grad: 0.13 | Train [F:0.004 D:0.943 Fl:0.007 C:0.0123] | Val [F:0.006 D:0.949 Fl:0.006 C:0.0174]
+  [Epoch 18, Batch 10/19] Loss: 0.5567, F1: 0.522, Grad: 0.14
+Epoch 018/80 | Loss 0.5766/0.5814 | F1 0.319/0.393 | Dice 0.393 | IoU 0.246 | P 0.311 | R 0.571 | Thr 0.87 | LR 1.9e-04 | 23.3s
+       Grad: 0.15 | Train [F:0.006 D:0.932 Fl:0.008 C:0.0137] | Val [F:0.004 D:0.946 Fl:0.006 C:0.0116]
+  [Epoch 19, Batch 10/19] Loss: 0.5909, F1: 0.210, Grad: 0.18
+Epoch 019/80 | Loss 0.5754/0.5810 | F1 0.318/0.379 | Dice 0.379 | IoU 0.234 | P 0.306 | R 0.550 | Thr 0.89 | LR 1.9e-04 | 23.8s
+       Grad: 0.18 | Train [F:0.006 D:0.931 Fl:0.008 C:0.0131] | Val [F:0.005 D:0.946 Fl:0.006 C:0.0110]
+  [Epoch 20, Batch 10/19] Loss: 0.5637, F1: 0.387, Grad: 0.17
+Epoch 020/80 | Loss 0.5747/0.5795 | F1 0.313/0.350 | Dice 0.350 | IoU 0.213 | P 0.243 | R 0.650 | Thr 0.90 | LR 1.8e-04 | 23.8s
+       Grad: 0.16 | Train [F:0.006 D:0.931 Fl:0.007 C:0.0119] | Val [F:0.006 D:0.940 Fl:0.006 C:0.0131]
+  [Epoch 21, Batch 10/19] Loss: 0.5630, F1: 0.396, Grad: 0.19
+Epoch 021/80 | Loss 0.5733/0.5771 | F1 0.317/0.347 | Dice 0.347 | IoU 0.211 | P 0.260 | R 0.617 | Thr 0.87 | LR 1.8e-04 | 23.5s
+       Grad: 0.19 | Train [F:0.007 D:0.930 Fl:0.007 C:0.0108] | Val [F:0.007 D:0.938 Fl:0.006 C:0.0106]
+  [Epoch 22, Batch 10/19] Loss: 0.5822, F1: 0.262, Grad: 0.17
+Epoch 022/80 | Loss 0.5678/0.5689 | F1 0.331/0.395 | Dice 0.395 | IoU 0.246 | P 0.316 | R 0.594 | Thr 0.82 | LR 1.8e-04 | 23.5s
+       Grad: 0.17 | Train [F:0.007 D:0.921 Fl:0.007 C:0.0097] | Val [F:0.006 D:0.929 Fl:0.006 C:0.0069]
+  [Epoch 23, Batch 10/19] Loss: 0.5774, F1: 0.203, Grad: 0.20
+Epoch 023/80 | Loss 0.5645/0.5638 | F1 0.305/0.366 | Dice 0.366 | IoU 0.225 | P 0.275 | R 0.628 | Thr 0.90 | LR 1.8e-04 | 23.4s
+       Grad: 0.22 | Train [F:0.009 D:0.914 Fl:0.008 C:0.0098] | Val [F:0.007 D:0.918 Fl:0.006 C:0.0075]
+  [Epoch 24, Batch 10/19] Loss: 0.5277, F1: 0.476, Grad: 0.22
+Epoch 024/80 | Loss 0.5593/0.5652 | F1 0.313/0.310 | Dice 0.310 | IoU 0.185 | P 0.213 | R 0.654 | Thr 0.86 | LR 1.7e-04 | 23.0s
+       Grad: 0.25 | Train [F:0.009 D:0.907 Fl:0.007 C:0.0087] | Val [F:0.010 D:0.917 Fl:0.006 C:0.0089]
+  [Epoch 25, Batch 10/19] Loss: 0.5161, F1: 0.437, Grad: 0.33
+Epoch 025/80 | Loss 0.5526/0.5615 | F1 0.299/0.297 | Dice 0.297 | IoU 0.175 | P 0.214 | R 0.660 | Thr 0.90 | LR 1.7e-04 | 23.7s
+       Grad: 0.31 | Train [F:0.011 D:0.894 Fl:0.008 C:0.0081] | Val [F:0.012 D:0.909 Fl:0.006 C:0.0095]
+  [Epoch 26, Batch 10/19] Loss: 0.4844, F1: 0.524, Grad: 0.35
+Epoch 026/80 | Loss 0.5421/0.5446 | F1 0.315/0.369 | Dice 0.369 | IoU 0.227 | P 0.289 | R 0.613 | Thr 0.72 | LR 1.7e-04 | 23.8s
+       Grad: 0.34 | Train [F:0.012 D:0.877 Fl:0.008 C:0.0073] | Val [F:0.008 D:0.888 Fl:0.006 C:0.0046]
+  [Epoch 27, Batch 10/19] Loss: 0.5483, F1: 0.251, Grad: 0.44
+Epoch 027/80 | Loss 0.5364/0.5357 | F1 0.301/0.314 | Dice 0.314 | IoU 0.188 | P 0.208 | R 0.676 | Thr 0.90 | LR 1.6e-04 | 23.5s
+       Grad: 0.41 | Train [F:0.011 D:0.869 Fl:0.007 C:0.0066] | Val [F:0.011 D:0.869 Fl:0.006 C:0.0068]
+  [Epoch 28, Batch 10/19] Loss: 0.5045, F1: 0.363, Grad: 0.49
+Epoch 028/80 | Loss 0.5269/0.5273 | F1 0.300/0.385 | Dice 0.385 | IoU 0.240 | P 0.297 | R 0.557 | Thr 0.89 | LR 1.6e-04 | 23.6s
+       Grad: 0.47 | Train [F:0.013 D:0.853 Fl:0.007 C:0.0061] | Val [F:0.008 D:0.861 Fl:0.006 C:0.0035]
+  [Epoch 29, Batch 10/19] Loss: 0.5892, F1: 0.075, Grad: 0.50
+Epoch 029/80 | Loss 0.5023/0.5140 | F1 0.339/0.343 | Dice 0.343 | IoU 0.208 | P 0.247 | R 0.616 | Thr 0.90 | LR 1.6e-04 | 23.4s
+       Grad: 0.51 | Train [F:0.013 D:0.811 Fl:0.008 C:0.0052] | Val [F:0.011 D:0.836 Fl:0.006 C:0.0047]
+  [Epoch 30, Batch 10/19] Loss: 0.5095, F1: 0.288, Grad: 0.69
+Epoch 030/80 | Loss 0.4905/0.4850 | F1 0.356/0.381 | Dice 0.381 | IoU 0.236 | P 0.290 | R 0.602 | Thr 0.90 | LR 1.5e-04 | 23.1s
+       Grad: 0.73 | Train [F:0.012 D:0.795 Fl:0.007 C:0.0039] | Val [F:0.009 D:0.790 Fl:0.006 C:0.0031]
+  [Epoch 31, Batch 10/19] Loss: 0.5244, F1: 0.294, Grad: 0.68
+Epoch 031/80 | Loss 0.4663/0.4692 | F1 0.386/0.381 | Dice 0.381 | IoU 0.236 | P 0.284 | R 0.635 | Thr 0.90 | LR 1.5e-04 | 23.7s
+       Grad: 0.85 | Train [F:0.013 D:0.754 Fl:0.007 C:0.0032] | Val [F:0.011 D:0.762 Fl:0.006 C:0.0033]
+  [Epoch 32, Batch 10/19] Loss: 0.4813, F1: 0.334, Grad: 0.94
+Epoch 032/80 | Loss 0.4471/0.4778 | F1 0.400/0.335 | Dice 0.335 | IoU 0.205 | P 0.251 | R 0.643 | Thr 0.79 | LR 1.5e-04 | 23.7s
+       Grad: 1.01 | Train [F:0.012 D:0.722 Fl:0.007 C:0.0029] | Val [F:0.014 D:0.773 Fl:0.006 C:0.0048]
+  [Epoch 33, Batch 10/19] Loss: 0.3334, F1: 0.629, Grad: 0.88
+Epoch 033/80 | Loss 0.4182/0.4556 | F1 0.437/0.360 | Dice 0.360 | IoU 0.220 | P 0.252 | R 0.654 | Thr 0.90 | LR 1.4e-04 | 23.0s
+       Grad: 0.83 | Train [F:0.011 D:0.676 Fl:0.007 C:0.0021] | Val [F:0.012 D:0.738 Fl:0.006 C:0.0036]
+  [Epoch 34, Batch 10/19] Loss: 0.4813, F1: 0.287, Grad: 0.63
+Epoch 034/80 | Loss 0.4404/0.4309 | F1 0.370/0.406 | Dice 0.406 | IoU 0.256 | P 0.332 | R 0.547 | Thr 0.89 | LR 1.4e-04 | 23.5s
+       Grad: 0.70 | Train [F:0.015 D:0.712 Fl:0.006 C:0.0024] | Val [F:0.010 D:0.702 Fl:0.005 C:0.0018]
+  New best Dice: 0.406 at epoch 34
+  [Epoch 35, Batch 10/19] Loss: 0.3520, F1: 0.538, Grad: 0.76
+Epoch 035/80 | Loss 0.4208/0.4104 | F1 0.393/0.432 | Dice 0.432 | IoU 0.275 | P 0.416 | R 0.482 | Thr 0.74 | LR 1.4e-04 | 23.9s
+       Grad: 0.87 | Train [F:0.013 D:0.681 Fl:0.006 C:0.0020] | Val [F:0.011 D:0.668 Fl:0.004 C:0.0011]
+  New best Dice: 0.432 at epoch 35
+  [Epoch 36, Batch 10/19] Loss: 0.3704, F1: 0.492, Grad: 0.81
+Epoch 036/80 | Loss 0.3972/0.4000 | F1 0.442/0.430 | Dice 0.430 | IoU 0.275 | P 0.371 | R 0.518 | Thr 0.82 | LR 1.3e-04 | 23.6s
+       Grad: 0.79 | Train [F:0.014 D:0.642 Fl:0.005 C:0.0013] | Val [F:0.011 D:0.651 Fl:0.005 C:0.0013]
+  [Epoch 37, Batch 10/19] Loss: 0.3505, F1: 0.490, Grad: 0.97
+Epoch 037/80 | Loss 0.3951/0.3759 | F1 0.427/0.452 | Dice 0.452 | IoU 0.293 | P 0.410 | R 0.529 | Thr 0.71 | LR 1.3e-04 | 24.0s
+       Grad: 1.08 | Train [F:0.014 D:0.639 Fl:0.006 C:0.0014] | Val [F:0.011 D:0.610 Fl:0.005 C:0.0011]
+  New best Dice: 0.452 at epoch 37
+  [Epoch 38, Batch 10/19] Loss: 0.4104, F1: 0.387, Grad: 1.11
+Epoch 038/80 | Loss 0.3670/0.4004 | F1 0.469/0.417 | Dice 0.417 | IoU 0.266 | P 0.422 | R 0.425 | Thr 0.42 | LR 1.2e-04 | 23.5s
+       Grad: 1.08 | Train [F:0.013 D:0.592 Fl:0.006 C:0.0012] | Val [F:0.012 D:0.652 Fl:0.004 C:0.0006]
+  [Epoch 39, Batch 10/19] Loss: 0.3662, F1: 0.462, Grad: 1.12
+Epoch 039/80 | Loss 0.3656/0.3927 | F1 0.463/0.408 | Dice 0.408 | IoU 0.257 | P 0.315 | R 0.593 | Thr 0.87 | LR 1.2e-04 | 23.4s
+       Grad: 1.28 | Train [F:0.014 D:0.589 Fl:0.006 C:0.0013] | Val [F:0.012 D:0.635 Fl:0.006 C:0.0020]
+  [Epoch 40, Batch 10/19] Loss: 0.4808, F1: 0.236, Grad: 0.88
+Epoch 040/80 | Loss 0.3759/0.3906 | F1 0.438/0.435 | Dice 0.435 | IoU 0.281 | P 0.517 | R 0.405 | Thr 0.15 | LR 1.2e-04 | 23.9s
+       Grad: 0.90 | Train [F:0.016 D:0.607 Fl:0.005 C:0.0011] | Val [F:0.014 D:0.636 Fl:0.003 C:0.0003]
+  [Epoch 41, Batch 10/19] Loss: 0.3596, F1: 0.453, Grad: 1.01
+Epoch 041/80 | Loss 0.3480/0.3704 | F1 0.481/0.443 | Dice 0.443 | IoU 0.285 | P 0.413 | R 0.488 | Thr 0.61 | LR 1.1e-04 | 23.7s
+       Grad: 0.92 | Train [F:0.015 D:0.560 Fl:0.005 C:0.0009] | Val [F:0.013 D:0.601 Fl:0.004 C:0.0008]
+  [Epoch 42, Batch 10/19] Loss: 0.4073, F1: 0.389, Grad: 0.97
+Epoch 042/80 | Loss 0.3530/0.3798 | F1 0.470/0.419 | Dice 0.419 | IoU 0.266 | P 0.486 | R 0.380 | Thr 0.35 | LR 1.1e-04 | 23.5s
+       Grad: 0.96 | Train [F:0.014 D:0.569 Fl:0.005 C:0.0010] | Val [F:0.016 D:0.617 Fl:0.003 C:0.0004]
+  [Epoch 43, Batch 10/19] Loss: 0.2755, F1: 0.599, Grad: 1.24
+Epoch 043/80 | Loss 0.3449/0.3610 | F1 0.475/0.446 | Dice 0.446 | IoU 0.288 | P 0.445 | R 0.460 | Thr 0.56 | LR 1.0e-04 | 23.4s
+       Grad: 1.08 | Train [F:0.015 D:0.553 Fl:0.006 C:0.0011] | Val [F:0.014 D:0.585 Fl:0.004 C:0.0007]
+  [Epoch 44, Batch 10/19] Loss: 0.3295, F1: 0.509, Grad: 1.18
+Epoch 044/80 | Loss 0.3315/0.3790 | F1 0.502/0.419 | Dice 0.419 | IoU 0.269 | P 0.496 | R 0.397 | Thr 0.32 | LR 9.8e-05 | 23.9s
+       Grad: 1.08 | Train [F:0.015 D:0.532 Fl:0.006 C:0.0008] | Val [F:0.015 D:0.615 Fl:0.003 C:0.0004]
+  [Epoch 45, Batch 10/19] Loss: 0.3688, F1: 0.429, Grad: 1.25
+Epoch 045/80 | Loss 0.3597/0.3522 | F1 0.452/0.459 | Dice 0.459 | IoU 0.300 | P 0.442 | R 0.496 | Thr 0.62 | LR 9.4e-05 | 23.0s
+       Grad: 1.05 | Train [F:0.019 D:0.578 Fl:0.005 C:0.0009] | Val [F:0.013 D:0.570 Fl:0.005 C:0.0007]
+  New best Dice: 0.459 at epoch 45
+  [Epoch 46, Batch 10/19] Loss: 0.3392, F1: 0.490, Grad: 0.84
+Epoch 046/80 | Loss 0.3382/0.3463 | F1 0.483/0.471 | Dice 0.471 | IoU 0.310 | P 0.494 | R 0.466 | Thr 0.26 | LR 9.0e-05 | 22.6s
+       Grad: 0.79 | Train [F:0.015 D:0.544 Fl:0.005 C:0.0009] | Val [F:0.014 D:0.561 Fl:0.004 C:0.0004]
+  New best Dice: 0.471 at epoch 46
+  [Epoch 47, Batch 10/19] Loss: 0.3102, F1: 0.522, Grad: 0.86
+Epoch 047/80 | Loss 0.3388/0.3403 | F1 0.484/0.476 | Dice 0.476 | IoU 0.315 | P 0.542 | R 0.448 | Thr 0.34 | LR 8.6e-05 | 22.8s
+       Grad: 0.91 | Train [F:0.016 D:0.544 Fl:0.005 C:0.0009] | Val [F:0.014 D:0.551 Fl:0.004 C:0.0004]
+  New best Dice: 0.476 at epoch 47
+  [Epoch 48, Batch 10/19] Loss: 0.3376, F1: 0.499, Grad: 0.86
+Epoch 048/80 | Loss 0.3199/0.3620 | F1 0.514/0.453 | Dice 0.453 | IoU 0.295 | P 0.524 | R 0.432 | Thr 0.15 | LR 8.2e-05 | 22.8s
+       Grad: 0.93 | Train [F:0.017 D:0.512 Fl:0.006 C:0.0006] | Val [F:0.015 D:0.587 Fl:0.004 C:0.0003]
+  [Epoch 49, Batch 10/19] Loss: 0.4018, F1: 0.386, Grad: 1.01
+Epoch 049/80 | Loss 0.3393/0.3443 | F1 0.479/0.468 | Dice 0.468 | IoU 0.306 | P 0.455 | R 0.504 | Thr 0.45 | LR 7.8e-05 | 22.9s
+       Grad: 1.04 | Train [F:0.016 D:0.546 Fl:0.005 C:0.0007] | Val [F:0.014 D:0.556 Fl:0.004 C:0.0006]
+  [Epoch 50, Batch 10/19] Loss: 0.2961, F1: 0.551, Grad: 1.13
+Epoch 050/80 | Loss 0.3338/0.3746 | F1 0.486/0.418 | Dice 0.418 | IoU 0.269 | P 0.492 | R 0.392 | Thr 0.28 | LR 7.4e-05 | 24.1s
+       Grad: 1.22 | Train [F:0.016 D:0.536 Fl:0.005 C:0.0008] | Val [F:0.016 D:0.608 Fl:0.003 C:0.0004]
+  [Epoch 51, Batch 10/19] Loss: 0.3339, F1: 0.498, Grad: 1.03
+Epoch 051/80 | Loss 0.3375/0.3356 | F1 0.480/0.487 | Dice 0.487 | IoU 0.325 | P 0.455 | R 0.545 | Thr 0.69 | LR 7.0e-05 | 23.6s
+       Grad: 1.10 | Train [F:0.017 D:0.542 Fl:0.005 C:0.0008] | Val [F:0.012 D:0.542 Fl:0.005 C:0.0008]
+  New best Dice: 0.487 at epoch 51
+  [Epoch 52, Batch 10/19] Loss: 0.3247, F1: 0.491, Grad: 1.06
+Epoch 052/80 | Loss 0.3266/0.3393 | F1 0.494/0.487 | Dice 0.487 | IoU 0.325 | P 0.524 | R 0.481 | Thr 0.44 | LR 6.6e-05 | 23.9s
+       Grad: 1.07 | Train [F:0.014 D:0.526 Fl:0.005 C:0.0007] | Val [F:0.013 D:0.549 Fl:0.004 C:0.0004]
+  [Epoch 53, Batch 10/19] Loss: 0.2602, F1: 0.621, Grad: 1.05
+Epoch 053/80 | Loss 0.3196/0.3280 | F1 0.508/0.492 | Dice 0.492 | IoU 0.329 | P 0.489 | R 0.520 | Thr 0.59 | LR 6.2e-05 | 23.8s
+       Grad: 1.02 | Train [F:0.018 D:0.510 Fl:0.006 C:0.0007] | Val [F:0.013 D:0.530 Fl:0.005 C:0.0006]
+  New best Dice: 0.492 at epoch 53
+  [Epoch 54, Batch 10/19] Loss: 0.3803, F1: 0.398, Grad: 0.97
+Epoch 054/80 | Loss 0.3191/0.3316 | F1 0.509/0.486 | Dice 0.486 | IoU 0.325 | P 0.518 | R 0.507 | Thr 0.20 | LR 5.8e-05 | 23.7s
+       Grad: 0.92 | Train [F:0.017 D:0.510 Fl:0.006 C:0.0008] | Val [F:0.013 D:0.536 Fl:0.004 C:0.0005]
+  [Epoch 55, Batch 10/19] Loss: 0.3396, F1: 0.481, Grad: 0.75
+Epoch 055/80 | Loss 0.3214/0.3386 | F1 0.504/0.482 | Dice 0.482 | IoU 0.322 | P 0.539 | R 0.478 | Thr 0.34 | LR 5.4e-05 | 24.0s
+       Grad: 0.85 | Train [F:0.016 D:0.517 Fl:0.005 C:0.0006] | Val [F:0.014 D:0.548 Fl:0.004 C:0.0004]
+  [Epoch 56, Batch 10/19] Loss: 0.2481, F1: 0.637, Grad: 0.87
+Epoch 056/80 | Loss 0.2984/0.3321 | F1 0.543/0.493 | Dice 0.493 | IoU 0.330 | P 0.515 | R 0.517 | Thr 0.26 | LR 5.1e-05 | 23.7s
+       Grad: 0.85 | Train [F:0.015 D:0.477 Fl:0.006 C:0.0006] | Val [F:0.013 D:0.537 Fl:0.005 C:0.0005]
+  New best Dice: 0.493 at epoch 56
+  [Epoch 57, Batch 10/19] Loss: 0.2863, F1: 0.556, Grad: 0.87
+Epoch 057/80 | Loss 0.3114/0.3386 | F1 0.517/0.478 | Dice 0.478 | IoU 0.321 | P 0.540 | R 0.477 | Thr 0.20 | LR 4.7e-05 | 23.4s
+       Grad: 0.92 | Train [F:0.015 D:0.498 Fl:0.006 C:0.0007] | Val [F:0.014 D:0.548 Fl:0.004 C:0.0004]
+  [Epoch 58, Batch 10/19] Loss: 0.3170, F1: 0.509, Grad: 0.92
+Epoch 058/80 | Loss 0.3149/0.3539 | F1 0.514/0.452 | Dice 0.452 | IoU 0.302 | P 0.575 | R 0.427 | Thr 0.20 | LR 4.4e-05 | 23.6s
+       Grad: 0.96 | Train [F:0.015 D:0.506 Fl:0.005 C:0.0005] | Val [F:0.015 D:0.573 Fl:0.004 C:0.0003]
+  [Epoch 59, Batch 10/19] Loss: 0.3062, F1: 0.522, Grad: 0.93
+Epoch 059/80 | Loss 0.3056/0.3405 | F1 0.527/0.478 | Dice 0.478 | IoU 0.320 | P 0.530 | R 0.488 | Thr 0.52 | LR 4.0e-05 | 23.4s
+       Grad: 0.91 | Train [F:0.015 D:0.489 Fl:0.006 C:0.0007] | Val [F:0.013 D:0.550 Fl:0.005 C:0.0005]
+  [Epoch 60, Batch 10/19] Loss: 0.3614, F1: 0.436, Grad: 0.91
+Epoch 060/80 | Loss 0.3221/0.3471 | F1 0.500/0.460 | Dice 0.460 | IoU 0.310 | P 0.553 | R 0.462 | Thr 0.33 | LR 3.7e-05 | 23.0s
+       Grad: 0.94 | Train [F:0.015 D:0.518 Fl:0.005 C:0.0007] | Val [F:0.015 D:0.561 Fl:0.004 C:0.0004]
+  [Epoch 61, Batch 10/19] Loss: 0.3507, F1: 0.451, Grad: 1.42
+Epoch 061/80 | Loss 0.3336/0.3546 | F1 0.479/0.448 | Dice 0.448 | IoU 0.299 | P 0.525 | R 0.491 | Thr 0.52 | LR 3.4e-05 | 23.4s
+       Grad: 1.24 | Train [F:0.015 D:0.538 Fl:0.004 C:0.0007] | Val [F:0.014 D:0.573 Fl:0.005 C:0.0007]
+  [Epoch 62, Batch 10/19] Loss: 0.2336, F1: 0.644, Grad: 0.92
+Epoch 062/80 | Loss 0.3238/0.3506 | F1 0.495/0.455 | Dice 0.455 | IoU 0.305 | P 0.579 | R 0.446 | Thr 0.22 | LR 3.1e-05 | 23.8s
+       Grad: 0.98 | Train [F:0.017 D:0.519 Fl:0.005 C:0.0008] | Val [F:0.015 D:0.567 Fl:0.004 C:0.0004]
+  [Epoch 63, Batch 10/19] Loss: 0.2500, F1: 0.631, Grad: 0.85
+Epoch 063/80 | Loss 0.3213/0.3492 | F1 0.500/0.459 | Dice 0.459 | IoU 0.308 | P 0.582 | R 0.443 | Thr 0.42 | LR 2.8e-05 | 24.1s
+       Grad: 0.97 | Train [F:0.019 D:0.513 Fl:0.005 C:0.0007] | Val [F:0.015 D:0.565 Fl:0.004 C:0.0004]
+  [Epoch 64, Batch 10/19] Loss: 0.3180, F1: 0.510, Grad: 1.15
+Epoch 064/80 | Loss 0.2933/0.3483 | F1 0.549/0.458 | Dice 0.458 | IoU 0.308 | P 0.586 | R 0.445 | Thr 0.42 | LR 2.5e-05 | 22.2s
+       Grad: 1.05 | Train [F:0.015 D:0.468 Fl:0.006 C:0.0006] | Val [F:0.014 D:0.564 Fl:0.004 C:0.0004]
+  [Epoch 65, Batch 10/19] Loss: 0.2521, F1: 0.623, Grad: 0.99
+Epoch 065/80 | Loss 0.3324/0.3466 | F1 0.482/0.463 | Dice 0.463 | IoU 0.308 | P 0.577 | R 0.423 | Thr 0.41 | LR 2.3e-05 | 23.3s
+       Grad: 1.00 | Train [F:0.020 D:0.531 Fl:0.006 C:0.0008] | Val [F:0.015 D:0.561 Fl:0.004 C:0.0003]
+  [Epoch 66, Batch 10/19] Loss: 0.3049, F1: 0.525, Grad: 0.86
+Epoch 066/80 | Loss 0.3042/0.3327 | F1 0.528/0.489 | Dice 0.489 | IoU 0.327 | P 0.559 | R 0.463 | Thr 0.46 | LR 2.0e-05 | 23.5s
+       Grad: 0.95 | Train [F:0.018 D:0.485 Fl:0.006 C:0.0006] | Val [F:0.014 D:0.538 Fl:0.004 C:0.0004]
+  [Epoch 67, Batch 10/19] Loss: 0.3485, F1: 0.473, Grad: 0.81
+Epoch 067/80 | Loss 0.3186/0.3354 | F1 0.506/0.481 | Dice 0.481 | IoU 0.321 | P 0.560 | R 0.457 | Thr 0.35 | LR 1.8e-05 | 22.6s
+       Grad: 0.85 | Train [F:0.017 D:0.510 Fl:0.005 C:0.0007] | Val [F:0.015 D:0.542 Fl:0.004 C:0.0004]
+  [Epoch 68, Batch 10/19] Loss: 0.3868, F1: 0.386, Grad: 0.83
+Epoch 068/80 | Loss 0.3270/0.3410 | F1 0.490/0.471 | Dice 0.471 | IoU 0.314 | P 0.560 | R 0.448 | Thr 0.41 | LR 1.5e-05 | 22.9s
+       Grad: 0.89 | Train [F:0.017 D:0.524 Fl:0.005 C:0.0006] | Val [F:0.015 D:0.552 Fl:0.004 C:0.0004]
+  [Epoch 69, Batch 10/19] Loss: 0.2715, F1: 0.582, Grad: 0.80
+Epoch 069/80 | Loss 0.3229/0.3436 | F1 0.496/0.468 | Dice 0.468 | IoU 0.310 | P 0.539 | R 0.459 | Thr 0.20 | LR 1.3e-05 | 23.3s
+       Grad: 0.89 | Train [F:0.017 D:0.517 Fl:0.005 C:0.0007] | Val [F:0.015 D:0.556 Fl:0.004 C:0.0003]
+  [Epoch 70, Batch 10/19] Loss: 0.3748, F1: 0.406, Grad: 0.86
+Epoch 070/80 | Loss 0.3211/0.3289 | F1 0.499/0.495 | Dice 0.495 | IoU 0.332 | P 0.552 | R 0.481 | Thr 0.47 | LR 1.1e-05 | 23.1s
+       Grad: 0.81 | Train [F:0.017 D:0.515 Fl:0.005 C:0.0006] | Val [F:0.014 D:0.531 Fl:0.004 C:0.0004]
+  New best Dice: 0.495 at epoch 70
+  [Epoch 71, Batch 10/19] Loss: 0.2512, F1: 0.618, Grad: 1.08
+Epoch 071/80 | Loss 0.2956/0.3412 | F1 0.542/0.469 | Dice 0.469 | IoU 0.313 | P 0.550 | R 0.446 | Thr 0.36 | LR 9.6e-06 | 23.6s
+       Grad: 1.09 | Train [F:0.017 D:0.472 Fl:0.006 C:0.0006] | Val [F:0.015 D:0.552 Fl:0.004 C:0.0004]
+  [Epoch 72, Batch 10/19] Loss: 0.3467, F1: 0.468, Grad: 0.88
+Epoch 072/80 | Loss 0.3105/0.3307 | F1 0.521/0.489 | Dice 0.489 | IoU 0.329 | P 0.548 | R 0.484 | Thr 0.39 | LR 8.0e-06 | 22.8s
+       Grad: 1.01 | Train [F:0.018 D:0.496 Fl:0.005 C:0.0005] | Val [F:0.014 D:0.534 Fl:0.004 C:0.0004]
+  [Epoch 73, Batch 10/19] Loss: 0.4000, F1: 0.393, Grad: 0.86
+Epoch 073/80 | Loss 0.3305/0.3357 | F1 0.485/0.481 | Dice 0.481 | IoU 0.323 | P 0.552 | R 0.467 | Thr 0.38 | LR 6.5e-06 | 22.8s
+       Grad: 0.92 | Train [F:0.018 D:0.530 Fl:0.005 C:0.0006] | Val [F:0.014 D:0.543 Fl:0.004 C:0.0004]
+  [Epoch 74, Batch 10/19] Loss: 0.3144, F1: 0.515, Grad: 1.00
+Epoch 074/80 | Loss 0.3071/0.3371 | F1 0.523/0.479 | Dice 0.479 | IoU 0.322 | P 0.559 | R 0.462 | Thr 0.35 | LR 5.2e-06 | 23.0s
+       Grad: 0.96 | Train [F:0.016 D:0.492 Fl:0.005 C:0.0006] | Val [F:0.014 D:0.545 Fl:0.004 C:0.0004]
+  [Epoch 75, Batch 10/19] Loss: 0.2786, F1: 0.571, Grad: 0.94
+Epoch 075/80 | Loss 0.3136/0.3383 | F1 0.511/0.477 | Dice 0.477 | IoU 0.320 | P 0.563 | R 0.456 | Thr 0.31 | LR 4.1e-06 | 22.5s
+       Grad: 0.95 | Train [F:0.016 D:0.503 Fl:0.005 C:0.0006] | Val [F:0.015 D:0.547 Fl:0.004 C:0.0003]
+  [Epoch 76, Batch 10/19] Loss: 0.2986, F1: 0.555, Grad: 0.93
+Epoch 076/80 | Loss 0.2987/0.3380 | F1 0.537/0.475 | Dice 0.475 | IoU 0.319 | P 0.558 | R 0.454 | Thr 0.34 | LR 3.2e-06 | 22.9s
+       Grad: 0.90 | Train [F:0.016 D:0.478 Fl:0.005 C:0.0006] | Val [F:0.014 D:0.547 Fl:0.004 C:0.0004]
+  [Epoch 77, Batch 10/19] Loss: 0.2637, F1: 0.600, Grad: 1.09
+Epoch 077/80 | Loss 0.2868/0.3308 | F1 0.558/0.492 | Dice 0.492 | IoU 0.331 | P 0.562 | R 0.476 | Thr 0.47 | LR 2.4e-06 | 23.0s
+       Grad: 0.99 | Train [F:0.016 D:0.456 Fl:0.006 C:0.0006] | Val [F:0.014 D:0.535 Fl:0.004 C:0.0004]
+  [Epoch 78, Batch 10/19] Loss: 0.3912, F1: 0.387, Grad: 1.01
+Epoch 078/80 | Loss 0.3121/0.3377 | F1 0.513/0.477 | Dice 0.477 | IoU 0.321 | P 0.549 | R 0.477 | Thr 0.36 | LR 1.8e-06 | 23.0s
+       Grad: 0.97 | Train [F:0.013 D:0.503 Fl:0.005 C:0.0006] | Val [F:0.014 D:0.546 Fl:0.004 C:0.0004]
+  [Epoch 79, Batch 10/19] Loss: 0.3735, F1: 0.407, Grad: 1.01
+Epoch 079/80 | Loss 0.3015/0.3375 | F1 0.533/0.476 | Dice 0.476 | IoU 0.319 | P 0.557 | R 0.450 | Thr 0.40 | LR 1.3e-06 | 23.2s
+       Grad: 1.01 | Train [F:0.017 D:0.481 Fl:0.006 C:0.0006] | Val [F:0.015 D:0.546 Fl:0.004 C:0.0004]
+  [Epoch 80, Batch 10/19] Loss: 0.3967, F1: 0.364, Grad: 0.88
+Epoch 080/80 | Loss 0.3082/0.3369 | F1 0.518/0.477 | Dice 0.477 | IoU 0.320 | P 0.551 | R 0.462 | Thr 0.30 | LR 1.1e-06 | 22.4s
+       Grad: 0.91 | Train [F:0.016 D:0.494 Fl:0.005 C:0.0006] | Val [F:0.014 D:0.545 Fl:0.004 C:0.0004]
+
+================================================================================
+Training complete!
+Best Dice: 0.495 at epoch 70
+Model saved to: /home/arjun/CondensateNet/data/processed/checkpoints/best_model.pt
+================================================================================
+
