@@ -168,7 +168,7 @@ def train_condensate_model(
 
         # Training metrics
         train_loss, train_f1 = 0.0, 0.0
-        train_focal, train_dice_loss, train_flow_loss = 0.0, 0.0, 0.0
+        train_focal, train_dice_loss, train_flow_loss, train_cal_loss = 0.0, 0.0, 0.0, 0.0
         grad_norms = []
         n_train = 0
 
@@ -214,6 +214,7 @@ def train_condensate_model(
             train_focal += loss_dict["focal"]
             train_dice_loss += loss_dict["dice"]
             train_flow_loss += loss_dict["flow"]
+            train_cal_loss += loss_dict.get("calibration", 0.0)
             n_train += 1
 
             # Detect loss component imbalance
@@ -241,12 +242,13 @@ def train_condensate_model(
         avg_train_focal = train_focal / max(1, n_train)
         avg_train_dice = train_dice_loss / max(1, n_train)
         avg_train_flow = train_flow_loss / max(1, n_train)
+        avg_train_cal = train_cal_loss / max(1, n_train)
         avg_grad_norm = np.mean(grad_norms) if grad_norms else 0.0
 
         # === Validation ===
         model.eval()
         val_loss, val_f1, val_dice, val_iou, val_recall, val_precision = 0, 0, 0, 0, 0, 0
-        val_focal, val_dice_loss, val_flow_loss = 0.0, 0.0, 0.0
+        val_focal, val_dice_loss, val_flow_loss, val_cal_loss = 0.0, 0.0, 0.0, 0.0
         n_val = 0
         best_thresholds = []
 
@@ -277,6 +279,7 @@ def train_condensate_model(
                 val_focal += loss_dict["focal"]
                 val_dice_loss += loss_dict["dice"]
                 val_flow_loss += loss_dict["flow"]
+                val_cal_loss += loss_dict.get("calibration", 0.0)
                 n_val += 1
 
         # Average validation metrics
@@ -289,6 +292,7 @@ def train_condensate_model(
         avg_val_focal = val_focal / max(1, n_val)
         avg_val_dice_loss = val_dice_loss / max(1, n_val)
         avg_val_flow = val_flow_loss / max(1, n_val)
+        avg_val_cal = val_cal_loss / max(1, n_val)
         mean_best_thr = np.mean(best_thresholds) if best_thresholds else 0.5
 
         # Learning rate
@@ -306,9 +310,11 @@ def train_condensate_model(
               f"P {avg_val_precision:.3f} | R {avg_val_recall:.3f} | "
               f"Thr {mean_best_thr:.2f} | LR {lr_now:.1e} | {dt:.1f}s")
 
+        cal_str = f" C:{avg_train_cal:.4f}" if avg_train_cal > 0 else ""
+        val_cal_str = f" C:{avg_val_cal:.4f}" if avg_val_cal > 0 else ""
         print(f"       Grad: {avg_grad_norm:.2f} | "
-              f"Train [F:{avg_train_focal:.3f} D:{avg_train_dice:.3f} Fl:{avg_train_flow:.3f}] | "
-              f"Val [F:{avg_val_focal:.3f} D:{avg_val_dice_loss:.3f} Fl:{avg_val_flow:.3f}]")
+              f"Train [F:{avg_train_focal:.3f} D:{avg_train_dice:.3f} Fl:{avg_train_flow:.3f}{cal_str}] | "
+              f"Val [F:{avg_val_focal:.3f} D:{avg_val_dice_loss:.3f} Fl:{avg_val_flow:.3f}{val_cal_str}]")
 
         # Store history
         history["train_loss"].append(avg_train_loss)
@@ -385,7 +391,7 @@ if __name__ == "__main__":
 
     # 3. Model + loss
     model = create_condensate_model()
-    loss_fn = CondensateLoss()
+    loss_fn = CondensateLoss(calibration_weight=0.5)
 
     # 4. Train
     model, history = train_condensate_model(
