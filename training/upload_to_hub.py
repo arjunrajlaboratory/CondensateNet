@@ -1,13 +1,27 @@
-"""Upload trained CondensateNet model to Hugging Face Hub."""
+"""Upload trained CondensateNet model to Hugging Face Hub.
+
+Uploads in transformers-compatible format so that the condensatenet package
+can load via AutoModel.from_pretrained(). This requires:
+  - model.safetensors (weights)
+  - config.json (with auto_map pointing to custom classes)
+  - configuration_condensatenet.py (PretrainedConfig subclass)
+  - modeling_condensatenet.py (PreTrainedModel subclass)
+  - README.md (model card)
+"""
 
 import json
 import torch
 from pathlib import Path
-from huggingface_hub import HfApi, ModelCard, ModelCardData
+from huggingface_hub import HfApi, ModelCard, ModelCardData, hf_hub_download
+from safetensors.torch import save_file
 
 
 REPO_ID = "rajlab/condensatenet-v1"
-COLLECTION_SLUG = "rajlab/condensatenet"
+COLLECTION_SLUG = "rajlab/condensatenet-6945cf98e22aa0be561d9906"
+
+# The original repo has the transformers-compatible model/config classes
+# that we reuse (same architecture, different weights)
+SOURCE_REPO_ID = "rajlab/condensatenet"
 
 
 def create_model_card(checkpoint: dict) -> ModelCard:
@@ -73,21 +87,17 @@ Semantic segmentation model for detecting biomolecular condensates (puncta / str
 ## Usage
 
 ```python
-import torch
-from training.model import create_condensate_model
+from condensatenet import CondensateNetPipeline
 
-# Load model
-model = create_condensate_model()
-checkpoint = torch.load("best_model.pt", weights_only=False)
-model.load_state_dict(checkpoint["model_state_dict"])
-model.eval()
+# Load from HuggingFace
+pipeline = CondensateNetPipeline.from_pretrained("rajlab/condensatenet-v1")
 
-# Run inference on a 320x320 tile (1-channel, normalized to [0,1])
-tile = torch.randn(1, 1, 320, 320)  # replace with real data
-with torch.no_grad():
-    preds = model(tile)
-    mask_probs = torch.sigmoid(preds["mask"])
-    binary_mask = (mask_probs > 0.5).float()
+# Segment an image
+instances = pipeline.segment(image)
+print(f"Found {{instances.max()}} condensates")
+
+# Or load from a local download
+pipeline = CondensateNetPipeline.from_local("/path/to/model")
 ```
 
 ## Intended Use
@@ -112,20 +122,28 @@ Full training logs are available in the [GitHub repository](https://github.com/a
 
 
 def create_config_json(checkpoint: dict) -> dict:
-    """Extract model config as JSON-serializable dict."""
-    config = checkpoint["config"]
+    """Create transformers-compatible config.json.
+
+    Must include auto_map so AutoModel.from_pretrained() can find the
+    custom configuration and model classes.
+    """
     return {
-        "architecture": "EfficientNetV2-S + FPN + dual heads",
+        "architectures": ["CondensateNet"],
+        "model_type": "condensatenet",
+        "auto_map": {
+            "AutoConfig": "configuration_condensatenet.CondensateNetConfig",
+            "AutoModel": "modeling_condensatenet.CondensateNet",
+        },
         "encoder_variant": "rw_s",
         "pyramid_channels": [24, 48, 64, 160],
+        "pyramid_dim": 32,
         "use_spatial_attention": True,
         "spatial_kernel_size": 11,
         "dropout_rate": 0.15,
-        "tile_size": config.tile_size,
-        "num_params": 22236884,
+        "num_classes": 1,
+        "dtype": "float32",
         "training": {
             "num_epochs_run": checkpoint["epoch"] + 1,
-            "batch_size": config.batch_size,
             "loss": "focal + tversky + flow_mse + calibration_ece",
             "calibration_weight": 0.5,
             "optimizer": "AdamW",
@@ -162,7 +180,7 @@ def main():
     card = create_model_card(checkpoint)
     card.push_to_hub(REPO_ID)
 
-    # 3. Upload config
+    # 3. Upload config.json (transformers-compatible with auto_map)
     print("Uploading config.json...")
     config_json = create_config_json(checkpoint)
     config_path = Path("/tmp/condensatenet_config.json")
@@ -173,28 +191,42 @@ def main():
         repo_id=REPO_ID,
     )
 
-    # 4. Upload checkpoint (just state_dict + metadata, skip optimizer for size)
-    print("Preparing slim checkpoint (no optimizer state)...")
-    slim_checkpoint = {
-        "epoch": checkpoint["epoch"],
-        "model_state_dict": checkpoint["model_state_dict"],
-        "val_dice": checkpoint["val_dice"],
-        "val_f1": checkpoint["val_f1"],
-        "val_iou": checkpoint["val_iou"],
-    }
-    slim_path = Path("/tmp/best_model.pt")
-    torch.save(slim_checkpoint, slim_path)
-    size_mb = slim_path.stat().st_size / 1024 / 1024
-    print(f"  Slim checkpoint: {size_mb:.1f} MB (vs full with optimizer)")
+    # 4. Copy custom model/config classes from the original repo
+    # (same architecture, just different trained weights)
+    print(f"Copying model classes from {SOURCE_REPO_ID}...")
+    for filename in ["configuration_condensatenet.py", "modeling_condensatenet.py"]:
+        local_path = hf_hub_download(repo_id=SOURCE_REPO_ID, filename=filename)
+        api.upload_file(
+            path_or_fileobj=local_path,
+            path_in_repo=filename,
+            repo_id=REPO_ID,
+        )
+        print(f"  Uploaded {filename}")
 
-    print("Uploading checkpoint...")
+    # 5. Save weights as safetensors and upload
+    print("Converting to safetensors format...")
+    state_dict = checkpoint["model_state_dict"]
+    safetensors_path = Path("/tmp/model.safetensors")
+    save_file(state_dict, safetensors_path)
+    size_mb = safetensors_path.stat().st_size / 1024 / 1024
+    print(f"  model.safetensors: {size_mb:.1f} MB")
+
+    print("Uploading model.safetensors...")
     api.upload_file(
-        path_or_fileobj=str(slim_path),
-        path_in_repo="best_model.pt",
+        path_or_fileobj=str(safetensors_path),
+        path_in_repo="model.safetensors",
         repo_id=REPO_ID,
     )
 
-    # 5. Add to collection
+    # 6. Clean up old .pt file if it exists from a previous upload
+    print("Cleaning up old .pt file if present...")
+    try:
+        api.delete_file(path_in_repo="best_model.pt", repo_id=REPO_ID)
+        print("  Removed old best_model.pt")
+    except Exception:
+        pass
+
+    # 7. Add to collection
     print(f"\nAdding to collection {COLLECTION_SLUG}...")
     try:
         api.add_collection_item(
@@ -208,6 +240,9 @@ def main():
         print("  You may need to add it manually at https://huggingface.co/collections/rajlab/condensatenet")
 
     print(f"\nDone! Model available at https://huggingface.co/{REPO_ID}")
+    print("\nUploaded files:")
+    for f in api.list_repo_files(REPO_ID):
+        print(f"  {f}")
 
 
 if __name__ == "__main__":
